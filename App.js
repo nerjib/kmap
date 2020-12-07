@@ -1,52 +1,40 @@
-import React from 'react';
-import { Button, View, Text } from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-import HomePage from './src/screens/home'
 
-function HomeScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button
-        onPress={navigation.openDrawer}
-        title="Open navigation drawer"
-      />
-      <Button
-        onPress={() => navigation.navigate('Notifications',{me:'ff'})}
-        title="Go to notifications"
-      />
-    </View>
+import React, {useEffect, useState} from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import DrawerNavigator from "./src/screens/navigation/DrawerNavigator";
+import { MainStackNavigator, SettingsStackNavigator, OnboardingStackNavigator } from "./src/screens/navigation/StackNavigator";
+import {AsyncStorage} from 'react-native'
+
+ const App = () => {
+const [acc, setAcc] = useState('stack') 
+  
+const Langu=()=>{
+  setInterval(
+    ()=> {
+      AsyncStorage.getItem('login').then((val)=>{
+        if(val=='granted'){
+          setAcc('drawer')
+    
+        }else{
+          setAcc('stack')
+    
+        }
+      })
+    
+    },
+    1000
   );
 }
+useEffect(()=>{Langu()},[])
 
-function NotificationsScreen({ navigation, route }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button
-        onPress={navigation.openDrawer}
-        title="Open navigation drawer"
-      />
-      <Button
-        onPress={() => navigation.goBack()}
-        title="Go back home" 
-      />
-      <Text>
-      {route.params.me}
-      </Text>
-    </View>
-  );
-}
 
-const Drawer = createDrawerNavigator();
 
-export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={HomePage} />
-        <Drawer.Screen name="Notifications" component={NotificationsScreen} />
-        <Drawer.Screen name="Notifications b" component={NotificationsScreen} />
-      </Drawer.Navigator>
+    {/*acc=='drawer' && <DrawerNavigator />}
+    {acc=='stack' && <OnboardingStackNavigator />*/}
+    <DrawerNavigator />
     </NavigationContainer>
   );
 }
+export default App

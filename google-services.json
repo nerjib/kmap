@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1037240434638",
+    "firebase_url": "https://ruwassa-beff5.firebaseio.com",
+    "project_id": "ruwassa-beff5",
+    "storage_bucket": "ruwassa-beff5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037240434638:android:5e07e2f2ce680067edb59f",
+        "android_client_info": {
+          "package_name": "ng.com.nklere.ruwasa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037240434638-i1ghs7n5n0cp4rpo6vcgelsurpp4r298.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCytA5mymSijxygstX43F5D1LCU1zZfAqg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037240434638-i1ghs7n5n0cp4rpo6vcgelsurpp4r298.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

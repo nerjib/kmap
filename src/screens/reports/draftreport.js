@@ -9,31 +9,41 @@ import * as MediaLibrary from 'expo-media-library'
 import * as Permissions from 'expo-permissions';
 import axios from 'axios'
 
-import {Eng, Hau} from '../constant/eng'
-import Contact from "./Contact";
+import {Eng, Hau} from '../../constant/eng'
 //import { set } from "react-native-reanimated";
-import Geolo from './geo'
+import Geolo from '../geo'
+import Geo2 from '../geo2'
 
 
-const Home = ({navigation}) => {
-  let [lang, setLang] = useState(lang=Eng)
+const DraftReport = ({navigation, uid}) => {
+    let [lang, setLang] = useState(lang=Eng)
     let [incidence, setIncidence] = useState('Fire')
     let [imguri, setImgUri] = useState('')
+
     let [imguri2, setImgUri2] = useState('')
     let [gps, setGPS] = useState('')
     let [imgurl, setImgUrl] = useState('')
     let [area, setArea] = useState('')
     let [contact2, setContact2] = useState('')
     let [comment, setComment] = useState('')
+    let [lga, setLGA] = useState('Birnin Gwari')
     let [visibility, setVisibility] = useState(false)
+  let [cause, setCause] = useState('')
+  let [ward, setWard] = useState('')
+  let [place, setPlace] = useState('')
+  let [event, setEvent] = useState('')
+  let [causedescri, setCausedescr] = useState('')  
 
 
 
 
+const lgas=['Birnin Gwari','Giwa','Igabi','Ikara','Jaba','Jemaa','Kachia','Kaduna North','Kaduna South','Kagarko',
+  'Kajuru','Kaura','Kauru','Kubau','Kudan','Lere','Makarfi','Sabon Gari', 'Sanga','Soba','Zangon Kataf','Zaria']
 
 
+ 
 useEffect(()=>setImgUri2(''),[])
-const Langu=()=>{
+const Langu = () => {
   setInterval(
     ()=> {
       AsyncStorage.getItem('lang').then((val)=>{
@@ -42,7 +52,6 @@ const Langu=()=>{
     
         }else{
           setLang(Hau)
-    
         }
       })
     
@@ -51,24 +60,53 @@ const Langu=()=>{
   );
 }
 useEffect(()=>Langu(),[])
-useEffect(()=>AsyncStorage.getItem('login').then(v=>{
-  alert(v+ 'll')
-}),[])
-
+useEffect(()=>{AsyncStorage.getItem('login').then(v=>{
+ // alert(v)
+})},[])
 
 
 const about = e => navigation.navigate(e)
+
 const updateIncident =(e)=>{
   setIncidence(e)
 }
+const updateLGA =(e)=>{
+    setLGA(e)
+  }
 const changeArea =(e)=>{
   setArea(e)
 }
-const changeContact =(e)=>{
+const changeContact = (e) => {
   setContact2(e)
 }
+const changeCause = (e) => {
+ // alert(e)
+  setCause(e)
+}
+const changeplace = (e) => {
+  //alert(e)
 
+  setPlace(e)
+}
+
+const changeCausedescr = (e) => {
+  //alert(e)
+
+  setCausedescr(e)
+}
+const changeEvent = (e) => {
+  //alert(e)
+
+  setEvent(e)
+}
+const changeWard = (e) => {
+  //alert(e)
+
+  setWard(e)
+}
 const _takePhoto = async () => {
+
+
   // return alert('jjk')
    const {
      status: cameraPerm
@@ -101,7 +139,7 @@ const _takePhoto = async () => {
      //   alert(pickerResult.uri)
       const manipResult = await _CompressImg(pickerResult.uri)
 setImgUri(manipResult)
-    }else{/*this.setState({uploaded:'cancelled'})*/}
+    }else{}
   } catch (e) {
   } finally {
   }
@@ -148,10 +186,7 @@ const _handleImagePicked1 = async pickerResult => {
   let uploadResponse, uploadResult;
 
   try {
-   /* this.setState({
-        uploaded:'loading...',
-        visible:true
-    });*/
+   
     if (pickerResult) {
    //  return  alert(pickerResult)
       uploadResponse = await uploadImageAsync(pickerResult,1,1);
@@ -162,31 +197,33 @@ const _handleImagePicked1 = async pickerResult => {
        
          await setImgUrl(uploadResult.imgurl)
        
-     }
+     
      if(imgurl!= ''){
       const   data={
-        incidence: incidence,
-             uid: 1,
-           rtime: new Date(),
-             img: imgurl,
-             contact: contact2,
-             gps: gps,
-             address: area,
-             comment: comment
-
+        gps,
+        imgurl,
+        lga,
+        cause,
+        ward,
+        event,
+        descrcause:causedescri,
+        sid: uid,
+        source:uid,
+        state: 'Kaduna',
+        block: '',
+        place
          }
+       
+     
           // return(alert((data)))
-     await    axios.post('https://kd-sema.herokuapp.com/api/v1/reports',data)
+     await    axios.post('https://kd-sema.herokuapp.com/api/v1/reports/draftreports',data)
          .then(res=>{
-         setIncidence('Fire')
-          setImgUri ('')
-
-          setImgUri2('')
+        setImgUri ('')
         setImgUrl('')
-         setArea('')
-           setContact2('')
-         setComment('')
-         setVisibility(false)
+        setPlace('')
+        setEvent('Fire')
+        setCause('')
+        setCausedescr(false)
 
              alert('send')
          }).catch(err=>{alert(err)
@@ -195,6 +232,7 @@ const _handleImagePicked1 = async pickerResult => {
         })
 
      }
+    }
     }else{//this.setState({uploaded:'cancelled',visible:false})
   }
   } catch (e) {
@@ -204,17 +242,10 @@ const _handleImagePicked1 = async pickerResult => {
     setVisibility(false)
 
       alert('Upload failed, sorry :(');
-   /* this.setState({
-      uploaded:'failed',
-      visible:false
-  });*/
+  
   } finally {
     setVisibility(false)
 
- /*   this.setState({
-      uploading: false,
-      visible:false
-    });*/
   }
 };
 
@@ -222,51 +253,71 @@ const handleGps =(e)=>{
   setGPS(e)
 }
 
+const GPS2 = (e)=>{
+  setGPS2(e)
+}
+
  return (
 
-    <View style={styles.center}>
       <ScrollView>
       <View style={styles.container}>
       <ProgressLoader visible={visibility} isModal={true} isHUD={true}
             hudColor={"#000000"} color={"#FFFFFF"}/>
-            <View style={{display:'flex', flexDirection:'row'}}>
-              <TouchableOpacity style={{backgroundColor:'green'}} onPress={()=>{alert('messages')}}><Image src={''} style={{width:100, height:100,}}/></TouchableOpacity>
-              <TouchableOpacity style={{backgroundColor:'blue'}}><Image src={''} style={{width:100, height:100,}}/></TouchableOpacity>
+       
+                  <Text style={{margin:20, fontSize:19}}>{lang.formtitle}  </Text>
+    <Geolo onGps={handleGps}/>
+    
+  {//   <Geo2 onGPS2={GPS2}/>
+  }
 
-            </View>
-                  <Text style={{margin:20, fontSize:19}}>{lang.welcome}  </Text>
-      <Geolo onGps={handleGps}/>
+<Text style={styles.txt}> {lang.lga} </Text> 
+<Text>yyy{new Date().getDate()}</Text>
+<Picker style={{borderWidth:4,borderColor:'gray', height: 50, width: 150}} selectedValue = {lga}  onValueChange = {updateLGA}>
+{lgas.map(e=>
+               <Picker.Item label = {e} value = {e} />
+  
+)}
+            </Picker>
+
+<Text style={styles.txt}> {lang.ward} </Text> 
+
+<TextInput  style={styles.box}value={ward} onChangeText = {changeWard} placeholder={lang.ward}/>
+
               <Text style={styles.txt}> {lang.incidence} </Text> 
   
         <View>
-        <Picker style={{borderWidth:4,borderColor:'gray', height: 50, width: 150}} selectedValue = {incidence} onValueChange = {updateIncident}>
+        <Picker style={{borderWidth:4,borderColor:'gray', height: 50, width: 150}} selectedValue = {event} onValueChange = {changeEvent}>
                <Picker.Item label = {lang.fire} value = "Fire" />
                <Picker.Item label = {lang.flood} value = "Flood" />
                <Picker.Item label = {lang.accident} value = "Accident" />
             </Picker>
             </View>
-     
-        <TextInput style={styles.box} placeholder={lang.area} value={area} onChangeText = {changeArea}/>
-        <TextInput style={styles.box} placeholder={lang.contact} value={contact2} onChangeText = { changeContact}/>
-    
+
+            <Text style={styles.txt}> {lang.cause} </Text> 
+
+<TextInput  style={styles.box}value={cause} onChangeText = {changeCause} placeholder={lang.causedescr}/>
+
+
+              <Text style={styles.txt}> {lang.causedescr} </Text> 
+
+<TextInput  style={styles.box}value={causedescri} onChangeText = {changeCausedescr} placeholder={lang.causedescr}/>
+
+
+              <Text style={styles.txt}> {lang.place} </Text> 
+
+<TextInput  style={styles.box}value={place} onChangeText = {changeplace} placeholder={lang.place}/>
+
+ 
     {imguri2!='' &&    <Image source={{uri: imguri2}}
        style={{width: 150, height: 150}} />}
       <Button title={lang.pic} onPress={()=>_takePhoto() } />
       <TouchableOpacity style={styles.updbtn} onPress={()=>handleSend() } >
               <Text style={styles.txt}> {lang.send} </Text> 
-        </TouchableOpacity>
-
- {/*     <RNPickerSelect style={{color:'red'}} onValueChange={this.handleStage}
-items={[
-    {label:'Fire',  value:'Fire'},
-    {label:'Flood', value:'Flood'},
-    {label:'Bandit', value:'Bandit'},
-]}
-/>*/}
+        </TouchableOpacity> 
 
       </View>
+ 
       </ScrollView>
-    </View>
   );
 };
 
@@ -274,9 +325,7 @@ items={[
 
 async function uploadImageAsync(uri,a,b) {
   //return alert(uri+ )
-  let apiUrl = 'https://kd-sema.herokuapp.com/api/v1/upload';
-
-  
+  let apiUrl = 'https://kd-sema.herokuapp.com/api/v1/upload';  
   let uriParts = uri.split('.');
   let fileType = uriParts[uriParts.length - 1];
 //alert(fileType)
@@ -303,7 +352,7 @@ async function uploadImageAsync(uri,a,b) {
 
   return await fetch(apiUrl, options)
  
-
+/**/
 }
 
 
@@ -312,13 +361,16 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     justifyContent: 'flex-start',
-    alignItems: "center",
+    alignItems: "flex-start",
     textAlign: "center",
+    width:"90%"
+
   },
   container:{
     display:'flex',
     justifyContent:"flex-start",
-    alignItems: "center",
+    alignItems: "flex-start",
+    width:"90%"
     
   },
   updbtn:{
@@ -343,9 +395,9 @@ txt:{
     margin:10,
     height:60,
     borderColor: 'grey',
-    borderWidth:5,
+    borderWidth:1,
     borderBottomWidth:2,
-    width: 150,
+    width: "90%",
     marginRight:20,
     borderRadius:4,
     justifyContent:'center',
@@ -354,4 +406,4 @@ txt:{
 });
 
 
-export default Home;
+export default DraftReport;
